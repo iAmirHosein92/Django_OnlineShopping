@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+from celery.schedules import crontab
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
-    'storages'
+    'storages',
+
 ]
 
 MIDDLEWARE = [
@@ -108,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -133,18 +137,39 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+#
+# STORAGES = {
+#     "default": {
+#         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+#         "OPTIONS": {
+#                     "access_key": "466669ae-0c67-45a5-9db2-4fd5b276003b",
+#                     "secret_key": "eebc777ff2ae8479553c614c270dd310addf3734ce21993afa59918d79abd6fe",
+#                     "bucket_name": "onlinemedia",
+#                     "endpoint_url": 'https://s3.ir-thr-at1.arvanstorage.ir',
+#                     "file_overwrite": False,
+#                 }
+#             },
+#     'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+# }
 
 
-#ARVAN CLOUD
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-#AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-#AWS_SECRET_ACCESS_KEY = '<KEY>'
-#AWS_S3_ENDPOINT_URL = 'https://s3.arvan.com'
-#AWS_STORAGE_BUCKET_NAME = 'onlineshopping'
-#AWS_SERVICE_NAME = 's3'
-#AWS_S3_FILE_OVERWRITE = False
+# ARVAN CLOUD STORAGE
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3boto3Storage'
+AWS_ACCESS_KEY_ID=os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY=os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME=os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = 'https://s3.ir-thr-at1.arvanstorage.com'
+AWS_SERVICE_NAME = 's3'
+AWS_S3_FILE_OVERWRITE = False
+AWS_LOCAL_STORAGE = f'{BASE_DIR}/aws/'
 
-#CELERY
-# CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
-# CELERY_ACCEPT_CONTENT = ['json']
-# CELERY_TASK_SERIALIZER = 'json'
+
+#CELERY_BEAT
+CELERY_BEAT_SCHEDULE = {
+    'add-every-30-seconds': {
+        'task': 'accounts.tasks.handle',
+        'schedule': 60.0,  # هر ۳۰ ثانیه
+
+    },
+}
+

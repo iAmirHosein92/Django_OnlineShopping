@@ -17,10 +17,4 @@ celery_app.conf.accept_content = ['json', 'pickle']
 celery_app.conf.result_expires = timedelta(days=1)
 celery_app.conf.task_always_eager = False
 celery_app.conf.worker_prefetch_multiplier = 4
-celery_app.conf.beat_schedule = {
-    'add-every-30-seconds': {
-        'task': 'home.tasks.add',
-        'schedule': 30.0,
-        'args': (10, 20)
-    },
-}
+

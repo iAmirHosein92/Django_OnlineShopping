@@ -8,6 +8,10 @@ services:
       - "8000:8000"
     depends_on:
       - rabbitmq
+    networks:
+      - backend
+    env_file:
+      - .env
 
   celery:
     build: .
@@ -18,27 +22,11 @@ services:
       - C_FORCE_ROOT=True
     depends_on:
       - rabbitmq
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - "5672:5672"       # برای ارتباط با Celery
-      - "15672:15672"     # پنل مدیریتی وب
-    environment:
-      RABBITMQ_DEFAULT_USER: myuser
-      RABBITMQ_DEFAULT_PASS: mypassword
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - your_network_name
+      - backend
+    env_file:
+      - .env
 
-volumes:
-  rabbitmq_data:
-
-networks:
-  your_network_name:
-    driver: bridge
-  
   flower:
     build: .
     command: celery -A onlineshopping flower
@@ -48,6 +36,10 @@ networks:
       - rabbitmq
     volumes:
       - .:/code
+    networks:
+      - backend
+    env_file:
+      - .env
   beat:
     build: .
     command: celery -A onlineshopping beat --loglevel=info
@@ -55,3 +47,30 @@ networks:
       - .:/code
     depends_on:
       - rabbitmq
+    networks:
+      - backend
+    env_file:
+      - .env
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"       # برای ارتباط با Celery
+      - "15672:15672"     # پنل مدیریتی وب
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - backend
+    env_file:
+      - .env
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  backend:
+    driver: bridge
+  
