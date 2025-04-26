@@ -40,8 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #Local apps
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
+    'orders.apps.OrdersConfig',
+
+    #Third-party apps
     'storages',
 
 ]
@@ -137,21 +142,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
-#
-# STORAGES = {
-#     "default": {
-#         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-#         "OPTIONS": {
-#                     "access_key": "466669ae-0c67-45a5-9db2-4fd5b276003b",
-#                     "secret_key": "eebc777ff2ae8479553c614c270dd310addf3734ce21993afa59918d79abd6fe",
-#                     "bucket_name": "onlinemedia",
-#                     "endpoint_url": 'https://s3.ir-thr-at1.arvanstorage.ir',
-#                     "file_overwrite": False,
-#                 }
-#             },
-#     'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
-# }
-
 
 # ARVAN CLOUD STORAGE
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3boto3Storage'
